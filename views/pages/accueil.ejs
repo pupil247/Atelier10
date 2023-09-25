@@ -15,12 +15,30 @@
             <div class="jumbotron">
                 <h1>Accueil</h1>
                 <p>Bienvenue à mon site web</p>
+                <label id = labelNo></label></br>
+                <label id = labelDebut></label></br>
+                <label id = labelRefresh></label></br>
             </div>
         </main>
         <footer>
             <%- include('../partials/footer') %>
         </footer>
+    <script>
+        var socket = io.connect('http://localhost:8080');
+        socket.on('message1', function(message) {
+            alert('Le serveur a un message pour vous : ' + message);
+            $('#labelNo').text(message);
 
+        });
+        socket.on('message2', function(message) {
+            $('#labelDebut').text(message);
+
+        });
+        socket.on('message3', function(message) {
+            $('#labelRefresh').text(message);
+
+        });
+    </script> 
     </body>
 
 </html>
