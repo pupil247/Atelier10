@@ -18,6 +18,8 @@
                 <label id = labelNo></label></br>
                 <label id = labelDebut></label></br>
                 <label id = labelRefresh></label></br>
+                Heure actuelle: 
+                <label id = labelHeure></label></br>
             </div>
         </main>
         <footer>
@@ -39,6 +41,23 @@
 
         });
     </script> 
+    <script>
+        $(function() {
+            function Horloge() {
+                var laDate = new Date();
+                var h = laDate.getHours() + ":" + add_zero(laDate.getMinutes(),2) + ":" + add_zero(laDate.getSeconds(),2);
+                $('#labelHeure').text(h);
+            }
+            function add_zero(your_number, length) {
+                var num = '' + your_number;
+                while (num.length < length) {
+                    num = '0' + num;
+                }
+                return num;
+            }   
+            setInterval(Horloge, 1000);
+        });
+    </script>    
     </body>
 
 </html>
