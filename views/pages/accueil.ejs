@@ -15,11 +15,18 @@
             <div class="jumbotron">
                 <h1>Accueil</h1>
                 <p>Bienvenue à mon site web</p>
+                <label id = labelAlarme></label></br>
                 <label id = labelNo></label></br>
                 <label id = labelDebut></label></br>
                 <label id = labelRefresh></label></br>
+                <label id = labelAlerteAlarme></label></br>
                 Heure actuelle: 
                 <label id = labelHeure></label></br>
+                <form onsubmit = "return false;">
+                    <h3>Entrez ici l'heure de l'alarme désirée</h3>
+                    <input type="time" id="alarme" />
+                    <button type="submit" id="alarmButton">Enregistrer</button>
+                </form>
             </div>
         </main>
         <footer>
@@ -27,26 +34,35 @@
         </footer>
     <script>
         var socket = io.connect('http://localhost:8080');
+        var heure = 0;
+        var minute = 0;
+
         socket.on('message1', function(message) {
             alert('Le serveur a un message pour vous : ' + message);
             $('#labelNo').text(message);
-
         });
         socket.on('message2', function(message) {
             $('#labelDebut').text(message);
-
         });
         socket.on('message3', function(message) {
             $('#labelRefresh').text(message);
-
         });
-    </script> 
-    <script>
+        socket.on('messageBroadcast', function(message) {
+            const alarme = message.split(':');
+            heure = alarme[0]; 
+            minute = alarme[1];
+            $('#labelAlarme').text('Nouvelle heure d\'alarme : ' + alarme[0] + ":" + alarme[1]);
+        });
+
         $(function() {
             function Horloge() {
                 var laDate = new Date();
                 var h = laDate.getHours() + ":" + add_zero(laDate.getMinutes(),2) + ":" + add_zero(laDate.getSeconds(),2);
                 $('#labelHeure').text(h);
+                if(laDate.getHours() == heure && laDate.getMinutes() == minute)
+                    $('#labelAlerteAlarme').text("ALARME!"); 
+                else
+                    $('#labelAlerteAlarme').text("");        
             }
             function add_zero(your_number, length) {
                 var num = '' + your_number;
@@ -57,7 +73,17 @@
             }   
             setInterval(Horloge, 1000);
         });
-    </script>    
+
+        $('#alarmButton').click(function () {
+            const alarme = $('#alarme').val().split(':');
+            $('#labelAlarme').text('Nouvelle heure d\'alarme : ' + alarme[0] + ":" + alarme[1]);
+            heure = alarme[0]; 
+            minute = alarme[1];
+            console.log("test");
+            socket.emit('message4', $('#alarme').val());
+        });
+
+    </script>   
     </body>
 
 </html>
